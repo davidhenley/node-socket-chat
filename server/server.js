@@ -6,30 +6,11 @@ const app = express();
 const server = http.Server(app);
 const io = require('socket.io')(server);
 
-const { generateMessage } = require('./utils/message');
+const socketHandler = require('./socket/socket');
 
 app.use(express.static(path.join(__dirname, '../public')));
 
-io.on('connection', (socket) => {
-  console.log('New user connected');
-
-  // Send welcome message to user on connection
-  socket.emit('newMessage', generateMessage('Admin', 'Welcome to the Chat App!'));
-
-  // Send message to everyone else on connection
-  socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined!'));
-
-  // Listen for messages from user
-  socket.on('createMessage', ({ from, text }, cb) => {
-    // Send that message to everyone connected
-    io.emit('newMessage', generateMessage(from, text));
-    if (cb) cb('Message received');
-  });
-
-  socket.on('disconnect', () => {
-    console.log('User was disconnected');
-  });
-});
+io.on('connection', (socket) => socketHandler(socket, io));
 
 const PORT = process.env.PORT || 3000;
 
