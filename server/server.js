@@ -14,13 +14,15 @@ io.on('connection', (socket) => {
   // Send welcome message to user on connection
   socket.emit('newMessage', {
     from: 'Admin',
-    text: 'Welcome to the Chat App!'
+    text: 'Welcome to the Chat App!',
+    createdAt: new Date().getTime()
   });
 
   // Send message to everyone else on connection
   socket.broadcast.emit('newMessage', {
     from: 'Admin',
-    text: 'New user joined!'
+    text: 'New user joined!',
+    createdAt: new Date().getTime()
   });
 
   // Listen for messages from user
@@ -28,7 +30,7 @@ io.on('connection', (socket) => {
     // Send that message to everyone connected
     io.emit('newMessage', {
       ...msg,
-      createdAt: new Date()
+      createdAt: new Date().getTime()
     });
   });
 
