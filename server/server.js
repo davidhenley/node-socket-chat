@@ -23,7 +23,7 @@ io.on('connection', (socket) => {
   socket.on('createMessage', ({ from, text }, cb) => {
     // Send that message to everyone connected
     io.emit('newMessage', generateMessage(from, text));
-    cb('This is from the server!');
+    if (cb) cb('Message received');
   });
 
   socket.on('disconnect', () => {
