@@ -1,14 +1,23 @@
 const expect = require('chai').expect;
 
-const { generateMessage } = require('./message');
+const { generateMessage, generateLocationMessage } = require('./message');
 
 describe('generateMessage', () => {
-  it('should generate object with from and text', () => {
-    const from = 'david@example.com';
-    const text = 'Here is some example text';
+  it('should generate the correct message object', () => {
+    const [from, text] = ['david@example.com', 'Here is some example text'];
     const message = generateMessage(from, text);
 
     expect(message.createdAt).to.be.a('number');
     expect(message).to.include({ from, text });
+  });
+});
+
+describe('generateLocationMessage', () => {
+  it('should generate the correct location object', () => {
+    const [from, lat, lng, url] = ['Admin', 36, -86, 'http://www.google.com/maps/@36,-86'];
+    const message = generateLocationMessage(from, lat, lng);
+
+    expect(message.createdAt).to.be.a('number');
+    expect(message).to.include({ from, url });
   });
 });
