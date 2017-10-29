@@ -12,6 +12,27 @@ if (!navigator.geolocation) {
   locationBtn.style.display = 'none';
 }
 
+function scrollToBottom() {
+  const newMessage = messageList.lastElementChild;
+  const prevMessage = newMessage.previousElementSibling;
+
+  const clientHeight = messageList.clientHeight;
+  const scrollTop = messageList.scrollTop;
+  const scrollHeight = messageList.scrollHeight;
+
+  const newMessageStyle = window.getComputedStyle(newMessage, null);
+  const newMessageHeight = parseInt(newMessageStyle.getPropertyValue("height"));
+  let prevMessageHeight = 0;
+  if (prevMessage) {
+    const prevMessageStyle = window.getComputedStyle(prevMessage, null);
+    prevMessageHeight = parseInt(prevMessageStyle.getPropertyValue("height"));
+  }
+
+  if ((clientHeight + scrollTop + newMessageHeight + prevMessageHeight) >= scrollHeight) {
+    messageList.scrollTop = scrollHeight;
+  }
+}
+
 function onFormSubmit(e) {
   e.preventDefault();
   socket.emit(
@@ -25,7 +46,6 @@ function onFormSubmit(e) {
 }
 
 function onTextChange(e) {
-  console.log(e.target.value);
   if (e.target.value.trim() !== '') {
     sendBtn.removeAttribute('disabled');
   } else {
@@ -40,6 +60,7 @@ function onReceiveMessage(msg) {
     createdAt: new Date(msg.createdAt).toLocaleTimeString()
   });
   messageList.insertAdjacentHTML('beforeend', html);
+  scrollToBottom();
 }
 
 function onReceiveLocationMessage(msg) {
@@ -49,6 +70,7 @@ function onReceiveLocationMessage(msg) {
     createdAt: new Date(msg.createdAt).toLocaleTimeString()
   });
   messageList.insertAdjacentHTML('beforeend', html);
+  scrollToBottom();
 }
 
 function onSendLocation() {
