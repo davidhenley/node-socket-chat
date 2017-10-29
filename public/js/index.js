@@ -9,14 +9,16 @@ if (!navigator.geolocation) {
   locationBtn.style.display = 'none';
 }
 
-window.onload = function() {
-  messageText.focus();
-}
-
 function onFormSubmit(e) {
   e.preventDefault();
-  socket.emit('createMessage', { from: 'User', text: messageText.value });
-  messageText.value = '';
+  socket.emit(
+    'createMessage',
+    { from: 'User', text: messageText.value },
+    function() {
+      messageText.value = '';
+      messageText.focus();
+    }
+  );
 }
 
 function onReceiveMessage(msg) {
@@ -37,13 +39,21 @@ function onReceiveLocationMessage(msg) {
 }
 
 function onSendLocation() {
+  locationBtn.textContent = 'Sending Location';
+  locationBtn.setAttribute('disabled', 'disabled');
   navigator.geolocation.getCurrentPosition(function(position) {
     socket.emit('createLocationMessage', {
       latitude: position.coords.latitude,
       longitude: position.coords.longitude
+    }, function() {
+      locationBtn.textContent = 'Send Location';
+      locationBtn.removeAttribute('disabled');
+      messageText.focus();
     });
   }, function(err) {
     alert('You must allow this app to view your current location.');
+    locationBtn.textContent = 'Send Location';
+    locationBtn.removeAttribute('disabled');
   });
 }
 
