@@ -4,6 +4,8 @@ const messageList = document.getElementById('message-list');
 const messageForm = document.getElementById('message-form');
 const messageText = document.getElementById('message-text');
 const locationBtn = document.getElementById('send-location-btn');
+const messageTemplate = document.getElementById('message-template').innerHTML;
+const locationTemplate = document.getElementById('location-message-template').innerHTML;
 
 if (!navigator.geolocation) {
   locationBtn.style.display = 'none';
@@ -22,22 +24,21 @@ function onFormSubmit(e) {
 }
 
 function onReceiveMessage(msg) {
-  const item = document.createElement('li');
-  const formattedTime = new Date(msg.createdAt).toLocaleTimeString();
-  item.textContent = `${msg.from} ${formattedTime}: ${msg.text}`;
-  messageList.appendChild(item);
+  const html = Mustache.render(messageTemplate, {
+    text: msg.text,
+    from: msg.from,
+    createdAt: new Date(msg.createdAt).toLocaleTimeString()
+  });
+  messageList.insertAdjacentHTML('beforeend', html);
 }
 
 function onReceiveLocationMessage(msg) {
-  const item = document.createElement('li');
-  const link = document.createElement('a');
-  const formattedTime = new Date(msg.createdAt).toLocaleTimeString();
-  link.setAttribute('href', msg.url);
-  link.setAttribute('target', '_blank');
-  link.innerHTML = 'My current location';
-  item.textContent = `${msg.from} ${formattedTime}: `;
-  item.appendChild(link);
-  messageList.appendChild(item);
+  const html = Mustache.render(locationTemplate, {
+    from: msg.from,
+    url: msg.url,
+    createdAt: new Date(msg.createdAt).toLocaleTimeString()
+  });
+  messageList.insertAdjacentHTML('beforeend', html);
 }
 
 function onSendLocation() {
