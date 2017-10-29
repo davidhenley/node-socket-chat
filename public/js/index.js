@@ -3,6 +3,7 @@ const socket = io();
 const messageList = document.getElementById('message-list');
 const messageForm = document.getElementById('message-form');
 const messageText = document.getElementById('message-text');
+const sendBtn = document.getElementById('send-message-btn');
 const locationBtn = document.getElementById('send-location-btn');
 const messageTemplate = document.getElementById('message-template').innerHTML;
 const locationTemplate = document.getElementById('location-message-template').innerHTML;
@@ -21,6 +22,15 @@ function onFormSubmit(e) {
       messageText.focus();
     }
   );
+}
+
+function onTextChange(e) {
+  console.log(e.target.value);
+  if (e.target.value.trim() !== '') {
+    sendBtn.removeAttribute('disabled');
+  } else {
+    sendBtn.setAttribute('disabled', 'disabled');
+  }
 }
 
 function onReceiveMessage(msg) {
@@ -73,4 +83,7 @@ socket.on('disconnect', onDisconnect);
 socket.on('newMessage', onReceiveMessage);
 socket.on('newLocationMessage', onReceiveLocationMessage);
 messageForm.addEventListener('submit', onFormSubmit);
+messageText.addEventListener('change', onTextChange);
+messageText.addEventListener('keyup', onTextChange);
+messageText.addEventListener('paste', onTextChange);
 locationBtn.addEventListener('click', onSendLocation);
