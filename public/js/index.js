@@ -23,17 +23,19 @@ function onFormSubmit(e) {
 
 function onReceiveMessage(msg) {
   const item = document.createElement('li');
-  item.textContent = `${msg.from}: ${msg.text}`;
+  const formattedTime = new Date(msg.createdAt).toLocaleTimeString();
+  item.textContent = `${msg.from} ${formattedTime}: ${msg.text}`;
   messageList.appendChild(item);
 }
 
 function onReceiveLocationMessage(msg) {
   const item = document.createElement('li');
   const link = document.createElement('a');
+  const formattedTime = new Date(msg.createdAt).toLocaleTimeString();
   link.setAttribute('href', msg.url);
   link.setAttribute('target', '_blank');
   link.innerHTML = 'My current location';
-  item.textContent = `${msg.from}: `;
+  item.textContent = `${msg.from} ${formattedTime}: `;
   item.appendChild(link);
   messageList.appendChild(item);
 }
